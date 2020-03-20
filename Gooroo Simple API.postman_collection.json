@@ -1,0 +1,453 @@
+{
+	"info": {
+		"_postman_id": "e90955a0-f026-487e-874e-11a236fa5d74",
+		"name": "Gooroo Simple API",
+		"description": "# Gooroo Simple API\n\nAPI documentation for Gooroo Simple API\n\n# Authentication\n\nWe are using JWT for authentication user. \nSome API may not required a token like register and login user.  \nBut to listing, submit, viewing a book needs a token.  \nToken must be placed in header:\n```\nAuthorization: Bearer YOUR_TOKEN\n```\n\nEach request you make to 'authenticated area', server will give a new token via header response. It named `X-Next-Token`. You (client) should replace current token with the new one.\n\nHappy Exploring!",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "User Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\":\"kanaya3@example.co.id\",\n\t\"password\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						},
+						"description": "## Description\nAPI to register user\n\n## Payload\n```\n{\n\t\"email\":\"kanaya2@example.co.id\",\n\t\"password\": \"pass123\"\n}\n```\n\n- email\n\t- required\n\t- must be in email format\n- password\n\t- required"
+					},
+					"response": []
+				},
+				{
+					"name": "User Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "56f5f99e-af5a-4682-a917-2f1559d8d064",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"USER_TOKEN\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"kanaya@example.com\",\n\t\"password\":\"pass123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users/login",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						},
+						"description": "## Description\nAPI to handle user login. It will return `token`. Then you have to pass token in each request in header section as `Authorization` with following format:  \n```\nAuthorization: Bearer generated____token____from____login___api\n```\n\n## Payload\n```\n{\n\t\"email\": \"kanaya@example.com\",\n\t\"password\":\"pass123\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "User Detail",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/users/me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						},
+						"description": "## Description\nHandle detail information of current user logged in"
+					},
+					"response": []
+				},
+				{
+					"name": "User Book Contributions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/users/contributions",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"contributions"
+							]
+						},
+						"description": "## Description\nAPI to show list book that user has contributed"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "Book Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/categories",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"categories"
+							]
+						},
+						"description": "## Description\nAPI to show categories of the books"
+					},
+					"response": []
+				},
+				{
+					"name": "Book Submit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\":\"Title Sample #6\",\n\t\"author\":\"Yuliantika Hapsari\",\n\t\"publisher\":\"Gramediax\",\n\t\"category\": [\"Technology\",\"Science Fiction\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/books",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"books"
+							]
+						},
+						"description": "## Description\nAPI to handle submit book.  \nYou have to pass title, author, publisher and array of categories.  \nIn categories attribute if the value not present in DB it will added as new one (upsert).  \n\n## Payload\n```\n{\n    \"message\": \"Success to submit book\",\n    \"data\": {\n        \"title\": \"Title Sample #6\",\n        \"author\": \"Yuliantika Hapsari\",\n        \"publisher\": \"Gramediax\",\n        \"category\": [\n            \"Technology\",\n            \"Science Fiction\"\n        ]\n    }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Book List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{USER_TOKEN}}"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/books",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "category_id",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						},
+						"description": "## Description\nAPI to show book list\n\n## Params\n- category_id (optional)"
+					},
+					"response": []
+				},
+				{
+					"name": "Book Edit",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\":\"Title Sample #01\",\n\t\"author\":\"Yuliantika Hapsarix\",\n\t\"publisher\":\"Gramedia\",\n\t\"category\": [\"Technology\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/books/:ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"books",
+								":ID"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						},
+						"description": "## Description\nAPI to handle book update\n\n## Payload\n```\n{\n\t\"title\":\"Title Sample #01\",\n\t\"author\":\"Yuliantika Hapsarix\",\n\t\"publisher\":\"Gramedia\",\n\t\"category\": [\"Technology\"]\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Book Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/books/:ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"books",
+								":ID"
+							],
+							"query": [
+								{
+									"key": "category_id",
+									"value": "1",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						},
+						"description": "## Description\nAPI to get detail information of a book"
+					},
+					"response": []
+				},
+				{
+					"name": "Book Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/books/:ID",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"books",
+								":ID"
+							],
+							"query": [
+								{
+									"key": "category_id",
+									"value": "1",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "10"
+								}
+							]
+						},
+						"description": "## Description\nAPI to handle delete book"
+					},
+					"response": []
+				},
+				{
+					"name": "Book Checkout / Borrow",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{USER_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/books/:ID/checkout",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"books",
+								":ID",
+								"checkout"
+							],
+							"variable": [
+								{
+									"key": "ID",
+									"value": "1"
+								}
+							]
+						},
+						"description": "## Description\nAPI to handle submit / check out book from Library"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "fecce8c2-3538-4d14-8672-7b59939a737d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "3d81ffa4-6e2d-4f6d-b3ae-1595596cc8b7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
